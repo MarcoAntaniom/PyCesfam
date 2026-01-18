@@ -354,7 +354,8 @@ CREATE TABLE `usuarios` (
   `apellido` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL,
   `rol_id` int(11) NOT NULL,
-  `estado_id` int(11) NOT NULL
+  `estado_id` int(11) NOT NULL,
+  `intentos_fallidos` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
