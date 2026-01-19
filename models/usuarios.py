@@ -35,6 +35,31 @@ class Usuario:
                 c.cursor.close()
                 c.conexion.close()
 
+    def leer_medicos(self):
+        c = None
+        try:
+            c = ConexionDB()
+            sql = """SELECT
+                        u.id,
+                        u.rut,
+                        u.nombre,
+                        u.apellido,
+                        r.nombre,
+                        e.nombre
+                    FROM usuarios u
+                    INNER JOIN roles r ON r.id = u.rol_id
+                    INNER JOIN estado_usuario e ON e.id = u.estado_id
+                    WHERE u.rol_id = 2
+                    """
+            c.cursor.execute(sql)
+            return c.cursor.fetchall()
+        except Exception as e:
+            print(f"Error al leer los médicos: {e}")
+        finally:
+            if c is not None:
+                c.cursor.close()
+                c.conexion.close()
+
     def agregar_usuario(self):
         c = None
         try:
