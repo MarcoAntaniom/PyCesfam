@@ -12,21 +12,21 @@ class Cita_medica:
     def leer_por_fecha(self, fecha):
         c = None
         try:
+            fecha_recibida = fecha
+            fecha_valida = datetime.strptime(fecha_recibida, "%Y-%m-%d")
+            fecha_bd = fecha_valida.strftime("%Y-%m-%d")
             c = ConexionDB()
-            sql = """SELECT 
-                        c.id,
-                        CONCAT(u.nombre, ' ', u.apellido) AS nombre_medico,
-                        CONCAT(p.nombres, ' ', p.apellidos) AS nombre_paciente,
-                        c.fecha_hora,
-                        e.nombre AS nombre_estado
-                    FROM citas_medicas c
-                    INNER JOIN usuarios u ON u.id = c.id_medico
-                    INNER JOIN pacientes p ON p.id = c.id_paciente
-                    INNER JOIN estado_cita e ON e.id = estado_cita
-                    WHERE DATE(c.fecha_hora) = %s
-                    ORDER BY c.id
+            sql = """SELECT
+                        id,
+                        nombre_medico,
+                        nombre_paciente,
+                        fecha_hora,
+                        nombre_estado
+                    FROM vista_citas_medico
+                    WHERE DATE(fecha_hora) = %s
+                    ORDER BY fecha_hora ASC
                     """
-            datos = [fecha]
+            datos = [fecha_bd]
             c.cursor.execute(sql, datos)
             return c.cursor.fetchall()
         except Exception as e:
@@ -47,8 +47,8 @@ class Cita_medica:
                         fecha_hora,
                         nombre_estado
                     FROM vista_citas_medico
-                    WHERE id_medico = %s
-                    ORDER BY id
+                    WHERE id_medico = %s AND nombre_estado != 'Cancelada'
+                    ORDER BY fecha_hora DESC
                     """
             datos = [id_medico]
             c.cursor.execute(sql, datos)
@@ -93,6 +93,22 @@ class Cita_medica:
         except Exception as e:
             c.conexion.rollback()
             print(f"Error al reprogramar la cita: {e}")
+        finally:
+            if c is not None:
+                c.cursor.close()
+                c.conexion.close()
+
+    def cancelar_cita(self, id):
+        c = None
+        try:
+            c = ConexionDB()
+            sql = "UPDATE citas_medicas SET estado_cita = 2 WHERE id = %s"
+            datos = [id]
+            c.cursor.execute(sql, datos)
+            c.conexion.commit()
+        except Exception as e:
+            c.conexion.rollback()
+            print(f"Error al cancelar la cita: {e}")
         finally:
             if c is not None:
                 c.cursor.close()
