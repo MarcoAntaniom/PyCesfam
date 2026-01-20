@@ -668,6 +668,32 @@ ALTER TABLE `recetas`
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`),
   ADD CONSTRAINT `usuarios_ibfk_2` FOREIGN KEY (`estado_id`) REFERENCES `estado_usuario` (`id`);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vista_citas_medico`
+--
+
+CREATE VIEW vista_citas_medico AS
+SELECT 
+    c.id,
+    c.id_medico,
+    CONCAT(u.nombre, ' ', u.apellido) AS nombre_medico,
+    CONCAT(
+        SUBSTRING_INDEX(p.nombres, ' ', 1), 
+        IF(LOCATE(' ', p.nombres) > 0, CONCAT(' ', SUBSTRING(p.nombres, LOCATE(' ', p.nombres) + 1, 1), '.'), ''),
+        ' ',
+        SUBSTRING_INDEX(p.apellidos, ' ', 1),
+        IF(LOCATE(' ', p.apellidos) > 0, CONCAT(' ', SUBSTRING(p.apellidos, LOCATE(' ', p.apellidos) + 1, 1), '.'), '')
+    ) AS nombre_paciente,
+    c.fecha_hora,
+    e.nombre AS nombre_estado
+FROM citas_medicas c
+INNER JOIN usuarios u ON u.id = c.id_medico
+INNER JOIN pacientes p ON p.id = c.id_paciente
+INNER JOIN estado_cita e ON e.id = c.estado_cita;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

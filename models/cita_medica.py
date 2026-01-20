@@ -13,7 +13,19 @@ class Cita_medica:
         c = None
         try:
             c = ConexionDB()
-            sql = "SELECT * FROM citas_medicas WHERE fecha = %s"
+            sql = """SELECT 
+                        c.id,
+                        CONCAT(u.nombre, ' ', u.apellido) AS nombre_medico,
+                        CONCAT(p.nombres, ' ', p.apellidos) AS nombre_paciente,
+                        c.fecha_hora,
+                        e.nombre AS nombre_estado
+                    FROM citas_medicas c
+                    INNER JOIN usuarios u ON u.id = c.id_medico
+                    INNER JOIN pacientes p ON p.id = c.id_paciente
+                    INNER JOIN estado_cita e ON e.id = estado_cita
+                    WHERE DATE(c.fecha_hora) = %s
+                    ORDER BY c.id
+                    """
             datos = [fecha]
             c.cursor.execute(sql, datos)
             return c.cursor.fetchall()
@@ -28,7 +40,16 @@ class Cita_medica:
         c = None
         try:
             c = ConexionDB()
-            sql = "SELECT * FROM citas_medicas WHERE id_medico = %s"
+            sql = """SELECT
+                        id,
+                        nombre_medico,
+                        nombre_paciente,
+                        fecha_hora,
+                        nombre_estado
+                    FROM vista_citas_medico
+                    WHERE id_medico = %s
+                    ORDER BY id
+                    """
             datos = [id_medico]
             c.cursor.execute(sql, datos)
             return c.cursor.fetchall()
@@ -56,6 +77,22 @@ class Cita_medica:
         except Exception as e:
             c.conexion.rollback()
             print(f"Error al agregar la cita: {e}")
+        finally:
+            if c is not None:
+                c.cursor.close()
+                c.conexion.close()
+
+    def reprogramar_cita(self, id, nueva_fecha):
+        c = None
+        try:
+            c = ConexionDB()
+            sql = "UPDATE citas_medicas SET fecha_hora = %s WHERE id = %s"
+            datos = [nueva_fecha, id]
+            c.cursor.execute(sql, datos)
+            c.conexion.commit()
+        except Exception as e:
+            c.conexion.rollback()
+            print(f"Error al reprogramar la cita: {e}")
         finally:
             if c is not None:
                 c.cursor.close()
