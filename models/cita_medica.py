@@ -48,7 +48,7 @@ class Cita_medica:
                         nombre_estado
                     FROM vista_citas_medico
                     WHERE id_medico = %s AND nombre_estado != 'Cancelada'
-                    ORDER BY fecha_hora DESC
+                    ORDER BY fecha_hora ASC
                     """
             datos = [id_medico]
             c.cursor.execute(sql, datos)
