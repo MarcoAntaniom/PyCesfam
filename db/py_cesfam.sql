@@ -246,6 +246,27 @@ CREATE TABLE `medicamento` (
   `concentracion` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `medicamento`
+--
+
+INSERT INTO `medicamento` (`id`, `nombre`, `forma_farmaceutica`, `stock`, `concentracion`) VALUES
+(1, 'Paracetamol', 1, 500, '500 mg'),
+(2, 'Ibuprofeno', 1, 300, '400 mg'),
+(3, 'Amoxicilina', 1, 150, '500 mg'),
+(4, 'Losartán', 1, 600, '50 mg'),
+(5, 'Metformina', 1, 450, '850 mg'),
+(6, 'Diclofenaco Sódico', 3, 50, '75 mg/3ml'),
+(7, 'Clorfenamina', 1, 200, '4 mg'),
+(8, 'Omeprazol', 1, 350, '20 mg'),
+(9, 'Betametasona', 4, 40, '0.05%'),
+(10, 'Ketorolaco', 3, 60, '30 mg/ml'),
+(11, 'Loratadina', 2, 80, '1 mg/ml'),
+(12, 'Ácido Acetilsalicílico', 1, 250, '100 mg'),
+(13, 'Enalapril', 1, 400, '10 mg'),
+(14, 'Clotrimazol', 4, 75, '1%'),
+(15, 'Penicilina Benzatina', 3, 30, '1.200.000 UI');
+
 -- --------------------------------------------------------
 
 --
