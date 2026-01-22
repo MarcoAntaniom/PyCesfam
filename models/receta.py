@@ -111,3 +111,63 @@ class Receta:
             if c is not None:
                 c.cursor.close()
                 c.conexion.close()
+
+    def marcar_rechazado(self, id):
+        c = None
+        try:
+            c = ConexionDB()
+            sql = "UPDATE recetas SET estado_entrega = 3 WHERE id = %s"
+            datos = [id]
+            c.cursor.execute(sql, datos)
+            c.conexion.commit()
+        except Exception as e:
+            c.conexion.rollback()
+            print(f"Error al marcar la receta como rechazada: {e}")
+        finally:
+            if c is not None:
+                c.cursor.close()
+                c.conexion.close()
+
+    def marcar_vencida(self, id):
+        c = None
+        try:
+            c = ConexionDB()
+            sql = "UPDATE recetas SET estado_entrega = 5 WHERE id = %s"
+            datos = [id]
+            c.cursor.execute(sql, datos)
+            c.conexion.commit()
+        except Exception as e:
+            c.conexion.rollbacK()
+            print(f"Error al marcar como vencida la receta: {e}")
+        finally:
+            if c is not None:
+                c.cursor.close()
+                c.conexion.close()
+
+    def obtener_por_id(self, id):
+        c = None
+        try:
+            c = ConexionDB()
+            sql = "SELECT * FROM recetas WHERE id = %s"
+            datos = [id]
+            c.cursor.execute(sql, datos)
+            fila = c.cursor.fetchone()
+
+            if fila:
+
+                self.id = fila[0]
+                self.detalle_cita_id = fila[1]
+                self.medicamento_id = fila[2]
+                self.fecha_entrega = fila[3]
+                self.cant_solicitada = fila[4]
+                self.duracion = fila[5]
+                self.frecuencia = fila[6]
+                self.dosis = fila[7]
+                self.estado_entrega = fila[8]
+
+        except Exception as e:
+            print(f"Error al obtener los datos de la receta: {e}")
+        finally:
+            if c is not None:
+                c.cursor.close()
+                c.conexion.close()
