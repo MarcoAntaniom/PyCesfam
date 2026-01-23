@@ -5,6 +5,8 @@ from models.especialidad import Especialidad
 from models.paciente import Paciente
 from models.estado_paciente import Estado_paciente
 from models.sexo import Sexo
+from models.cita_medica import Cita_medica
+from models.estado_cita import Estado_cita
 
 # Menú del Administrador
 def menu_admin(usuario):
@@ -13,7 +15,8 @@ def menu_admin(usuario):
         print(f"PANEL ADMINISTRADOR | Usuario: {usuario['nombre']} {usuario['apellido']}")
         print("="*40)
         print("1. Gestionar Usuarios")
-        print("2. Gestionar pacientes")
+        print("2. Gestionar Pacientes")
+        print("3. Gestionar Citas Médicas")
 
         op = input("Ingrese una opción: ")
 
@@ -68,11 +71,11 @@ def menu_admin(usuario):
                     print(f"\nEditando Usuario {u.nombre} {u.apellido}")
                     print("Presione 'Enter' para manter el valor actual.")
 
-                    nuevo_nombre = input(f"Nombre actual {u.nombre}")
+                    nuevo_nombre = input(f"Nombre actual {u.nombre}: ")
                     if nuevo_nombre.strip():
                         u.nombre = nuevo_nombre
                     
-                    nuevo_apellido = input(f"Apellido actual {u.apellido}")
+                    nuevo_apellido = input(f"Apellido actual {u.apellido}: ")
                     if nuevo_apellido.strip():
                         u.apellido = nuevo_apellido
                     
@@ -81,7 +84,7 @@ def menu_admin(usuario):
                     for rol in roles:
                         print(f"ID: {rol[0]} | Nombre: {rol[1]}")
 
-                    nuevo_rol = input(f"Rol actual: {u.rol_id}")
+                    nuevo_rol = input(f"Rol actual: {u.rol_id}: ")
 
                     if nuevo_rol.strip():
                         u.rol_id = int(nuevo_rol)
@@ -190,3 +193,92 @@ def menu_admin(usuario):
                         Sexo: {paciente[7]}
                         Estado: {paciente[8]}
                         """))
+
+                rut = input("Ingrese el RUT del paciente: ")
+
+                p.obtener_por_rut(rut)
+
+                if p.id:
+                    print(f"\nEditando Usuario {p.nombres} {p.apellidos}")
+                    print("Presione 'Enter' para manter el valor actual.")
+
+                    nuevos_nombres = input(f"Nombres actuales {p.nombres}: ")
+                    if nuevos_nombres.strip():
+                        p.nombres = nuevos_nombres
+
+                    nuevos_apellidos = input(f"Apellidos actuales {p.apellidos}: ")
+                    if nuevos_apellidos.strip():
+                        p.apellidos = nuevos_apellidos
+
+                    nueva_direccion = input(f"Diracción actual {p.direccion}: ")
+                    if nueva_direccion.strip():
+                        p.direccion = nueva_direccion
+
+                    nuevo_num = input(f"Teléfono actual {p.telefono}: ")
+                    if nuevo_num.strip():
+                        p.telefono = nuevo_num
+                    
+                    p.modificar_paciente(p.id)
+                    print("Paciente modificado exitosamente")
+                
+                else:
+                    print("Paciente no encontrado.")
+
+            elif op_paciente == "3":
+                try:
+                    estados = e_p.leer_estados()
+                    pacientes = p.leer_pacientes()
+
+                    for paciente in pacientes:
+                        print(textwrap.dedent(f""" 
+                            ID: {paciente[0]}
+                            RUT: {paciente[1]}
+                            Nombres: {paciente[2]}
+                            Apellidos: {paciente[3]}
+                            Dirección: {paciente[4]}
+                            Teléfono: {paciente[5]}
+                            Fecha Nacimiento: {paciente[6]}
+                            Sexo: {paciente[7]}
+                            Estado: {paciente[8]}
+                            """))
+
+                    id_paciente = int(input("Ingrese el ID del paciente al que desea cambiar el estado: "))
+
+                    for estado in estados:
+                        print(f"ID: {estado[0]} | Nombre: {estado[1]}")
+
+                    id_estado = int(input("Ingrese el ID del estado: "))
+
+                    p.actualizar_estado_paciente(id_estado, id_paciente)
+                    print("Se cambio el estado exitosamente")
+                except ValueError:
+                    print("Error el ID del paciente y del estado solo aceptan valores númericos. Intente nuevamente")
+                finally:
+                    print()
+            
+            elif op_paciente == "4":
+                pacientes = p.leer_pacientes()
+
+                for paciente in pacientes:
+                    print(textwrap.dedent(f""" 
+                        ID: {paciente[0]}
+                        RUT: {paciente[1]}
+                        Nombres: {paciente[2]}
+                        Apellidos: {paciente[3]}
+                        Dirección: {paciente[4]}
+                        Teléfono: {paciente[5]}
+                        Fecha Nacimiento: {paciente[6]}
+                        Sexo: {paciente[7]}
+                        Estado: {paciente[8]}
+                        """))
+        
+        elif op == "3":
+            c = Cita_medica()
+            e_c = Estado_cita()
+
+            print("\n[!] Entrando al módulo de Gestión de Citas Médicas...")
+            print("\n Ingrese una de las siguientes opciones: ")
+            print("1. Agregar Cita")
+            print("2. Reprogramar Cita")
+            print("3. Cambiar Estado Cita")
+            print("4. Consultar Citas")
