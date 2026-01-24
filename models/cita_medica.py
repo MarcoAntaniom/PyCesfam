@@ -82,6 +82,22 @@ class Cita_medica:
                 c.cursor.close()
                 c.conexion.close()
 
+    def cambiar_estado_cita(self, id ,estado_id):
+        c = None
+        try:
+            c = ConexionDB()
+            sql = "UPDATE citas_medicas SET estado_cita = %s WHERE id = %s"
+            datos = [estado_id, id]
+            c.cursor.execute(sql, datos)
+            c.conexion.commit()
+        except Exception as e:
+            c.conexion.rollback()
+            print(f"Error al cambiar el estado de la cita: {e}")
+        finally:
+            if c is not None:
+                c.cursor.close()
+                c.conexion.close()
+
     def reprogramar_cita(self, id, nueva_fecha):
         c = None
         try:

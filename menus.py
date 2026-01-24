@@ -273,6 +273,8 @@ def menu_admin(usuario):
                         """))
         
         elif op == "3":
+            u = Usuario()
+            p = Paciente()
             c = Cita_medica()
             e_c = Estado_cita()
 
@@ -282,3 +284,106 @@ def menu_admin(usuario):
             print("2. Reprogramar Cita")
             print("3. Cambiar Estado Cita")
             print("4. Consultar Citas")
+
+            op_cita = input("---> ")
+
+            if op_cita == "1":
+                medicos = u.leer_medicos()
+                pacientes = p.leer_pacientes()
+                
+                for medico in medicos:
+                    print(f"ID: {medico[0]} RUT: {medico[1]} | Nombre: {medico[2]} {medico[3]} | Rol: {medico[4]} | Estado: {medico[5]}")
+                
+                try:
+                    id_medico = int(input("Ingrese el ID del médico: "))
+
+                    for paciente in pacientes:
+                        print(textwrap.dedent(f""" 
+                            ID: {paciente[0]}
+                            RUT: {paciente[1]}
+                            Nombres: {paciente[2]}
+                            Apellidos: {paciente[3]}
+                            Dirección: {paciente[4]}
+                            Teléfono: {paciente[5]}
+                            Fecha Nacimiento: {paciente[6]}
+                            Sexo: {paciente[7]}
+                            Estado: {paciente[8]}
+                            """))
+                    
+                    id_paciente = int(input("Ingrese el ID del paciente: "))
+
+                    fecha_hora = input("Ingrese la fecha y hora de la cita médica (Ej: 2026-01-20 08:30): ")
+
+                    c.agregar_cita(id_medico, id_paciente, fecha_hora)
+                    print("Cita agregada exitosamente")
+                except ValueError:
+                    print("Los campos ID médico y ID paciente solo aceptan valores númericos. Intentelo nuevamente")
+                finally:
+                    print()
+
+            elif op_cita == "2":
+                fecha = input("Ingrese la fecha de la cita que desea buscar (Ej: 2026-01-02): ")
+
+                citas = c.leer_por_fecha(fecha)
+
+                for cita in citas:
+                    print(f"ID: {cita[0]} | Médico: {cita[1]} | Paciente: {cita[2]} | Fecha y Hora: {cita[3]} | Estado: {cita[4]}")
+                
+                id_cita = int(input("Ingrese el ID de la cita que desea reprogramar: "))
+
+                nueva_fecha = input("Ingrese la nueva fecha y hora de la cita (Ej: 2026-01-27): ")
+
+                c.reprogramar_cita(id_cita, nueva_fecha)
+                print("Se ha reprogramado la cita exitosamente")
+            
+            elif op_cita == "3":
+                fecha = input("Ingrese la fecha y hora de la cita médica (Ej: 2026-01-20 08:30): ")
+                citas = c.leer_por_fecha(fecha)
+                estados = e_c.leer_estados()
+
+                for cita in citas:
+                    print(f"ID: {cita[0]} | Médico: {cita[1]} | Paciente: {cita[2]} | Fecha y Hora: {cita[3]} | Estado: {cita[4]}")
+                
+                id_cita = int(input("Ingrese el ID de la cita: "))
+
+                for estado in estados:
+                    if estado[0] != 1:
+                        print(f"ID: {estado[0]} | Nombre: {estado[1]}")
+                
+                id_estado = int(input("Ingrese el ID del estado al que debe cambiar la cita: "))
+
+                c.cambiar_estado_cita(id_cita, id_estado)
+                print("Estado cambiado exitosamente")
+
+            elif op_cita == "4":
+                print("Escoja una de las siguientes opciones: ")
+                print("1. Buscar citas por fecha")
+                print("2. Buscar citas por médico")
+                opp = input("---> ")
+
+                if opp == "1":
+                    fecha_esc = input("Ingrese la fecha y hora de la cita médica (Ej: 2026-01-20 08:30): ")
+                    citas_fecha = c.leer_por_fecha(fecha_esc)
+
+                    print("\n")
+
+                    for cita in citas_fecha:
+                        print(f"ID: {cita[0]} | Médico: {cita[1]} | Paciente: {cita[2]} | Fecha y Hora: {cita[3]} | Estado: {cita[4]}")
+                    
+                elif opp == "2":
+                    medicos = u.leer_medicos()
+
+                    for medico in medicos:
+                        print(f"ID: {medico[0]} RUT: {medico[1]} | Nombre: {medico[2]} {medico[3]} | Rol: {medico[4]} | Estado: {medico[5]}")
+
+                    medico_id = int(input("Ingrese el ID del médico: "))
+
+                    citas_medico = c.leer_por_medico(medico_id)
+
+                    print("\n")
+
+                    for cita in citas_medico:
+                        print(f"ID: {cita[0]} | Médico: {cita[1]} | Paciente: {cita[2]} | Fecha y Hora: {cita[3]} | Estado: {cita[4]}")
+                
+                else:
+                    print("Ingrese una opción válida.")
